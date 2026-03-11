@@ -5,7 +5,7 @@ import { SECTORS, TAIL_LENGTH } from "../config/constants";
 const HEIGHT = 600;
 const MARGIN = { top: 40, right: 80, bottom: 60, left: 60 };
 const MIN_DOMAIN_SPAN = 2.4;
-const DOMAIN_LOOKBACK = TAIL_LENGTH * 6;
+const DOMAIN_LOOKBACK = TAIL_LENGTH * 2;
 
 function useContainerWidth() {
   const containerRef = useRef(null);
@@ -30,20 +30,24 @@ function useContainerWidth() {
   return [containerRef, width];
 }
 
-function buildCenteredDomain(values, centerValue) {
-  const extent = d3.extent(values);
-  const deviation = Math.max(
-    Math.abs((extent[0] ?? centerValue) - centerValue),
-    Math.abs((extent[1] ?? centerValue) - centerValue),
-    MIN_DOMAIN_SPAN / 2
-  );
+function buildCenteredDomain(values, centerValue, zoomLevel = 1) {
+  const deviations = values
+    .filter(Number.isFinite)
+    .map((value) => Math.abs(value - centerValue))
+    .sort(d3.ascending);
+
+  const robustDeviation =
+    deviations.length > 0 ? d3.quantileSorted(deviations, 0.9) ?? MIN_DOMAIN_SPAN / 2 : MIN_DOMAIN_SPAN / 2;
+  const absoluteDeviation = deviations.length > 0 ? deviations[deviations.length - 1] : MIN_DOMAIN_SPAN / 2;
+  const deviation = Math.max(robustDeviation, Math.min(absoluteDeviation, robustDeviation * 1.18), MIN_DOMAIN_SPAN / 2);
   const padding = Math.max(deviation * 0.18, 0.45);
-  const outerBound = deviation + padding;
+  const baseOuterBound = deviation + padding;
+  const outerBound = Math.max(MIN_DOMAIN_SPAN / 2, baseOuterBound / zoomLevel);
 
   return [centerValue - outerBound, centerValue + outerBound];
 }
 
-export default function RRGChart({ data, frameIndex }) {
+export default function RRGChart({ data, frameIndex, zoomLevel }) {
   const svgRef = useRef(null);
   const [containerRef, width] = useContainerWidth();
 
@@ -58,10 +62,10 @@ export default function RRGChart({ data, frameIndex }) {
     });
 
     return {
-      x: buildCenteredDomain(ratios, 100),
-      y: buildCenteredDomain(momentums, 100)
+      x: buildCenteredDomain(ratios, 100, zoomLevel),
+      y: buildCenteredDomain(momentums, 100, zoomLevel)
     };
-  }, [data, frameIndex]);
+  }, [data, frameIndex, zoomLevel]);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);

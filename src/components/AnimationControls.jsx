@@ -8,7 +8,9 @@ export default function AnimationControls({
   onPlay,
   onReset,
   onSpeedChange,
-  totalFrames
+  onZoomChange,
+  totalFrames,
+  zoomLevel
 }) {
   return (
     <div
@@ -53,6 +55,18 @@ export default function AnimationControls({
           step="100"
           value={intervalMs}
           onChange={(event) => onSpeedChange(Number(event.target.value))}
+        />
+      </label>
+
+      <label style={{ display: "grid", gap: "6px", minWidth: "220px" }}>
+        <span style={{ color: "rgba(255,255,255,0.8)" }}>Zoom: {zoomLevel.toFixed(1)}x</span>
+        <input
+          type="range"
+          min="0.8"
+          max="3"
+          step="0.1"
+          value={zoomLevel}
+          onChange={(event) => onZoomChange(Number(event.target.value))}
         />
       </label>
     </div>

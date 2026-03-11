@@ -12,6 +12,7 @@ export default function App() {
   const [frameIndex, setFrameIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [intervalMs, setIntervalMs] = useState(ANIMATION_INTERVAL_MS);
+  const [zoomLevel, setZoomLevel] = useState(1.4);
 
   const lastFrame = data ? data.dates.length - 1 : 0;
   const startFrame = useMemo(() => Math.max(0, lastFrame - TAIL_LENGTH * 5), [lastFrame]);
@@ -63,7 +64,7 @@ export default function App() {
             acts as the scrubber through time.
           </p>
         </div>
-        <RRGChart data={data} frameIndex={frameIndex} />
+        <RRGChart data={data} frameIndex={frameIndex} zoomLevel={zoomLevel} />
 
         <PriceTimeline
           currentFrame={frameIndex}
@@ -92,7 +93,9 @@ export default function App() {
             setFrameIndex(lastFrame);
           }}
           onSpeedChange={setIntervalMs}
+          onZoomChange={setZoomLevel}
           totalFrames={data.dates.length}
+          zoomLevel={zoomLevel}
         />
 
         <Legend />
