@@ -4,6 +4,7 @@ import { SECTORS, TAIL_LENGTH } from "../config/constants";
 
 const HEIGHT = 600;
 const MARGIN = { top: 40, right: 80, bottom: 60, left: 60 };
+const MIN_DOMAIN_SPAN = 4;
 
 function useContainerWidth() {
   const containerRef = useRef(null);
@@ -28,28 +29,36 @@ function useContainerWidth() {
   return [containerRef, width];
 }
 
+function buildZoomedDomain(values, centerValue) {
+  const extent = d3.extent(values);
+  const minValue = Math.min(extent[0], centerValue);
+  const maxValue = Math.max(extent[1], centerValue);
+  const span = Math.max(maxValue - minValue, MIN_DOMAIN_SPAN);
+  const padding = Math.max(span * 0.3, 0.8);
+  const domainCenter = (minValue + maxValue) / 2;
+
+  return [domainCenter - span / 2 - padding, domainCenter + span / 2 + padding];
+}
+
 export default function RRGChart({ data, frameIndex }) {
   const svgRef = useRef(null);
   const [containerRef, width] = useContainerWidth();
 
   const domain = useMemo(() => {
+    const windowStart = Math.max(0, frameIndex - TAIL_LENGTH * 3);
     const ratios = [];
     const momentums = [];
 
     SECTORS.forEach(({ ticker }) => {
-      ratios.push(...data.sectors[ticker].ratio);
-      momentums.push(...data.sectors[ticker].momentum);
+      ratios.push(...data.sectors[ticker].ratio.slice(windowStart, frameIndex + 1));
+      momentums.push(...data.sectors[ticker].momentum.slice(windowStart, frameIndex + 1));
     });
 
-    const xExtent = d3.extent(ratios);
-    const yExtent = d3.extent(momentums);
-    const pad = 0.75;
-
     return {
-      x: [Math.min(xExtent[0] - pad, 100 - pad), Math.max(xExtent[1] + pad, 100 + pad)],
-      y: [Math.min(yExtent[0] - pad, 100 - pad), Math.max(yExtent[1] + pad, 100 + pad)]
+      x: buildZoomedDomain(ratios, 100),
+      y: buildZoomedDomain(momentums, 100)
     };
-  }, [data]);
+  }, [data, frameIndex]);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
