@@ -8,54 +8,77 @@ export default function AnimationControls({
   onPlay,
   onReset,
   onSpeedChange,
-  totalFrames
+  onZoomChange,
+  totalFrames,
+  zoomLevel
 }) {
+  const speedOptions = [
+    { label: "Slow", value: 800 },
+    { label: "Normal", value: 500 },
+    { label: "Fast", value: 250 }
+  ];
+
+  const zoomOptions = [
+    { label: "Wide", value: 1 },
+    { label: "Close", value: 1.6 },
+    { label: "Tight", value: 2.2 }
+  ];
+
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "16px",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "16px 18px",
-        marginTop: "18px",
-        background: "rgba(255,255,255,0.04)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: "16px"
-      }}
-    >
-      <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-        <button type="button" onClick={isPlaying ? onPause : onPlay} style={buttonStyle}>
-          {isPlaying ? "Pause" : "Play"}
-        </button>
-        <button type="button" onClick={onReset} style={secondaryButtonStyle}>
-          Reset
-        </button>
+    <section className="chart-toolbar">
+      <div className="toolbar-block">
+        <div className="toolbar-label">Playback</div>
+        <div className="toolbar-actions">
+          <button type="button" onClick={isPlaying ? onPause : onPlay} style={buttonStyle}>
+            {isPlaying ? "Pause" : "Play"}
+          </button>
+          <button type="button" onClick={onReset} style={secondaryButtonStyle}>
+            Latest
+          </button>
+        </div>
       </div>
 
-      <div>
-        <div style={{ fontWeight: 700 }}>
+      <div className="toolbar-block toolbar-status">
+        <div className="toolbar-label">Current frame</div>
+        <div className="toolbar-metric">
           Frame {Math.min(currentFrame + 1, totalFrames)} / {totalFrames}
         </div>
-        <div style={{ color: "rgba(255,255,255,0.7)" }}>{currentDate ?? "No date loaded"}</div>
-        <div style={{ color: "rgba(255,255,255,0.92)", marginTop: "4px", fontWeight: 600 }}>
-          SPY {Number.isFinite(currentPrice) ? `$${currentPrice.toFixed(2)}` : "--"}
+        <div className="toolbar-subtle">{currentDate ?? "No date loaded"}</div>
+        <div className="toolbar-price">SPY {Number.isFinite(currentPrice) ? `$${currentPrice.toFixed(2)}` : "--"}</div>
+      </div>
+
+      <div className="toolbar-block">
+        <div className="toolbar-label">Speed</div>
+        <div className="toolbar-chip-row">
+          {speedOptions.map((option) => (
+            <button
+              key={option.label}
+              type="button"
+              onClick={() => onSpeedChange(option.value)}
+              style={option.value === intervalMs ? activeChipStyle : chipStyle}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
       </div>
 
-      <label style={{ display: "grid", gap: "6px", minWidth: "220px" }}>
-        <span style={{ color: "rgba(255,255,255,0.8)" }}>Speed: {intervalMs} ms</span>
-        <input
-          type="range"
-          min="200"
-          max="1000"
-          step="100"
-          value={intervalMs}
-          onChange={(event) => onSpeedChange(Number(event.target.value))}
-        />
-      </label>
-    </div>
+      <div className="toolbar-block">
+        <div className="toolbar-label">Zoom</div>
+        <div className="toolbar-chip-row">
+          {zoomOptions.map((option) => (
+            <button
+              key={option.label}
+              type="button"
+              onClick={() => onZoomChange(option.value)}
+              style={option.value === zoomLevel ? activeChipStyle : chipStyle}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -63,7 +86,7 @@ const buttonStyle = {
   border: "none",
   background: "#4d79ff",
   color: "#fff",
-  borderRadius: "10px",
+  borderRadius: "999px",
   padding: "10px 16px",
   cursor: "pointer",
   fontWeight: 700
@@ -72,4 +95,21 @@ const buttonStyle = {
 const secondaryButtonStyle = {
   ...buttonStyle,
   background: "rgba(255,255,255,0.1)"
+};
+
+const chipStyle = {
+  border: "1px solid rgba(255,255,255,0.12)",
+  background: "rgba(255,255,255,0.04)",
+  color: "rgba(237,242,255,0.86)",
+  borderRadius: "999px",
+  padding: "10px 14px",
+  cursor: "pointer",
+  fontWeight: 700
+};
+
+const activeChipStyle = {
+  ...chipStyle,
+  background: "rgba(77,121,255,0.22)",
+  border: "1px solid rgba(120,163,255,0.44)",
+  color: "#ffffff"
 };

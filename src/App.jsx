@@ -56,21 +56,6 @@ export default function App() {
   return (
     <div className="app-shell">
       <div className="app-frame">
-        <RRGChart data={data} frameIndex={frameIndex} zoomLevel={zoomLevel} />
-
-        <PriceTimeline
-          currentFrame={frameIndex}
-          currentPrice={currentPrice}
-          dates={data.dates}
-          onFrameChange={(nextFrame) => {
-            setIsPlaying(false);
-            setFrameIndex(nextFrame);
-          }}
-          onZoomChange={setZoomLevel}
-          prices={data.benchmark.prices}
-          zoomLevel={zoomLevel}
-        />
-
         <AnimationControls
           currentDate={data.dates[frameIndex]}
           currentFrame={frameIndex}
@@ -87,7 +72,22 @@ export default function App() {
             setFrameIndex(lastFrame);
           }}
           onSpeedChange={setIntervalMs}
+          onZoomChange={setZoomLevel}
           totalFrames={data.dates.length}
+          zoomLevel={zoomLevel}
+        />
+
+        <RRGChart data={data} frameIndex={frameIndex} zoomLevel={zoomLevel} />
+
+        <PriceTimeline
+          currentFrame={frameIndex}
+          currentPrice={currentPrice}
+          dates={data.dates}
+          onFrameChange={(nextFrame) => {
+            setIsPlaying(false);
+            setFrameIndex(nextFrame);
+          }}
+          prices={data.benchmark.prices}
         />
 
         <Legend />

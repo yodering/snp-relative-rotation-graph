@@ -51,6 +51,63 @@ body::before {
   margin: 0 auto;
 }
 
+.chart-toolbar {
+  position: sticky;
+  top: 14px;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(196, 215, 255, 0.12);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(18, 28, 53, 0.94), rgba(11, 17, 33, 0.94)),
+    rgba(8, 13, 26, 0.88);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 22px 60px rgba(5, 10, 24, 0.32);
+}
+
+.toolbar-block {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.toolbar-actions,
+.toolbar-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.toolbar-label {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(196, 215, 255, 0.62);
+}
+
+.toolbar-status {
+  min-width: 0;
+}
+
+.toolbar-metric {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #edf2ff;
+}
+
+.toolbar-subtle {
+  color: rgba(226, 232, 255, 0.72);
+}
+
+.toolbar-price {
+  color: #fff4cc;
+  font-weight: 700;
+}
+
 .eyebrow,
 .timeline-eyebrow {
   margin: 0 0 10px;
@@ -101,22 +158,6 @@ body::before {
   margin-bottom: 18px;
 }
 
-.timeline-controls {
-  display: grid;
-  gap: 14px;
-  min-width: min(320px, 100%);
-}
-
-.timeline-zoom {
-  display: grid;
-  gap: 6px;
-  color: rgba(226, 232, 255, 0.82);
-}
-
-.timeline-zoom span {
-  font-size: 0.95rem;
-}
-
 .timeline-readout {
   display: grid;
   gap: 4px;
@@ -162,6 +203,11 @@ body::before {
     padding: 22px 14px 36px;
   }
 
+  .chart-toolbar {
+    grid-template-columns: 1fr;
+    top: 10px;
+  }
+
   .timeline-card {
     padding: 16px;
   }
@@ -173,9 +219,5 @@ body::before {
 
   .timeline-readout {
     justify-items: start;
-  }
-
-  .timeline-controls {
-    width: 100%;
   }
 }
