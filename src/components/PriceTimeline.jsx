@@ -58,7 +58,8 @@ export default function PriceTimeline({
   currentPrice,
   dates,
   onFrameChange,
-  prices
+  prices,
+  tailLength
 }) {
   const scrollRef = useRef(null);
   const [containerRef, containerWidth] = useContainerWidth();
@@ -220,6 +221,17 @@ export default function PriceTimeline({
                 </text>
               </g>
             ))}
+
+            <rect
+              x={x(Math.max(0, currentFrame - tailLength))}
+              y={MARGIN.top}
+              width={Math.max(20, x(currentFrame) - x(Math.max(0, currentFrame - tailLength)))}
+              height={HEIGHT - MARGIN.top - MARGIN.bottom}
+              fill="rgba(255, 244, 204, 0.12)"
+              stroke="rgba(255, 244, 204, 0.4)"
+              strokeWidth="1.5"
+              rx="10"
+            />
 
             <path d={areaPath} fill="url(#timelineArea)" />
             <path

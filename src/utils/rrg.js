@@ -1,6 +1,37 @@
 import { BENCHMARK, EMA_PERIOD, RS_PERIOD, SECTORS } from "../config/constants";
 import { ema, sma } from "./indicators";
 
+export function aggregateToWeekly(priceData) {
+  if (!priceData || typeof priceData !== "object") {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(priceData).map(([symbol, bars]) => {
+      const weeklyBars = [];
+      let activeWeekKey = null;
+
+      bars.forEach((bar) => {
+        const date = new Date(`${bar.date}T00:00:00Z`);
+        const day = date.getUTCDay();
+        const weekEnd = new Date(date);
+        weekEnd.setUTCDate(date.getUTCDate() + (5 - day));
+        const weekKey = weekEnd.toISOString().slice(0, 10);
+
+        if (weekKey !== activeWeekKey) {
+          weeklyBars.push(bar);
+          activeWeekKey = weekKey;
+          return;
+        }
+
+        weeklyBars[weeklyBars.length - 1] = bar;
+      });
+
+      return [symbol, weeklyBars];
+    })
+  );
+}
+
 function computeSeries(prices, benchmarkPrices) {
   const rsLine = prices.map((price, index) => (price / benchmarkPrices[index]) * 100);
   const rsSma = sma(rsLine, RS_PERIOD);

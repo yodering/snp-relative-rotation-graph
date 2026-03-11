@@ -20,7 +20,9 @@ export const SECTORS = [
 
 export const RS_PERIOD = 10;
 export const EMA_PERIOD = 10;
-export const TAIL_LENGTH = 8;
+export const DEFAULT_TAIL_LENGTH = 8;
+export const MIN_TAIL_LENGTH = 3;
+export const MAX_TAIL_LENGTH = 16;
 export const LOOKBACK_MONTHS = 8;
 
 export const ANIMATION_INTERVAL_MS = 500;

@@ -4,11 +4,15 @@ export default function AnimationControls({
   currentFrame,
   intervalMs,
   isPlaying,
+  onFrequencyChange,
   onPause,
   onPlay,
   onReset,
   onSpeedChange,
+  onTailLengthChange,
   onZoomChange,
+  resolution,
+  tailLength,
   totalFrames,
   zoomLevel
 }) {
@@ -26,6 +30,25 @@ export default function AnimationControls({
 
   return (
     <section className="chart-toolbar">
+      <div className="toolbar-block">
+        <div className="toolbar-label">Closes</div>
+        <div className="toolbar-chip-row">
+          {[
+            { label: "Daily", value: "daily" },
+            { label: "Weekly", value: "weekly" }
+          ].map((option) => (
+            <button
+              key={option.label}
+              type="button"
+              onClick={() => onFrequencyChange(option.value)}
+              style={option.value === resolution ? activeChipStyle : chipStyle}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="toolbar-block">
         <div className="toolbar-label">Playback</div>
         <div className="toolbar-actions">
@@ -45,6 +68,20 @@ export default function AnimationControls({
         </div>
         <div className="toolbar-subtle">{currentDate ?? "No date loaded"}</div>
         <div className="toolbar-price">SPY {Number.isFinite(currentPrice) ? `$${currentPrice.toFixed(2)}` : "--"}</div>
+      </div>
+
+      <div className="toolbar-block toolbar-slider-block">
+        <div className="toolbar-label">Tail length</div>
+        <div className="toolbar-metric">{tailLength} periods</div>
+        <input
+          className="toolbar-range"
+          type="range"
+          min="3"
+          max="16"
+          step="1"
+          value={tailLength}
+          onChange={(event) => onTailLengthChange(Number(event.target.value))}
+        />
       </div>
 
       <div className="toolbar-block">

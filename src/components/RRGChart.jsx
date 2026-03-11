@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
-import { SECTORS, TAIL_LENGTH } from "../config/constants";
+import { DEFAULT_TAIL_LENGTH, SECTORS } from "../config/constants";
 
 const HEIGHT = 600;
 const MARGIN = { top: 40, right: 80, bottom: 60, left: 60 };
 const MIN_DOMAIN_SPAN = 2.4;
-const DOMAIN_LOOKBACK = TAIL_LENGTH * 2;
 const LABEL_PADDING = 10;
 
 function useContainerWidth() {
@@ -48,12 +47,12 @@ function buildCenteredDomain(values, centerValue, zoomLevel = 1) {
   return [centerValue - outerBound, centerValue + outerBound];
 }
 
-export default function RRGChart({ data, frameIndex, zoomLevel }) {
+export default function RRGChart({ data, frameIndex, tailLength = DEFAULT_TAIL_LENGTH, zoomLevel }) {
   const svgRef = useRef(null);
   const [containerRef, width] = useContainerWidth();
 
   const domain = useMemo(() => {
-    const windowStart = Math.max(0, frameIndex - DOMAIN_LOOKBACK);
+    const windowStart = Math.max(0, frameIndex - tailLength * 2);
     const ratios = [];
     const momentums = [];
 
@@ -66,7 +65,7 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
       x: buildCenteredDomain(ratios, 100, zoomLevel),
       y: buildCenteredDomain(momentums, 100, zoomLevel)
     };
-  }, [data, frameIndex, zoomLevel]);
+  }, [data, frameIndex, tailLength, zoomLevel]);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
@@ -223,7 +222,7 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
     SECTORS.forEach(({ color, ticker }) => {
       const ratio = data.sectors[ticker].ratio;
       const momentum = data.sectors[ticker].momentum;
-      const tailStart = Math.max(0, frameIndex - TAIL_LENGTH);
+      const tailStart = Math.max(0, frameIndex - tailLength);
       const tailPoints = d3.range(tailStart, frameIndex + 1).map((index) => [x(ratio[index]), y(momentum[index])]);
 
       clippedPlot
@@ -272,7 +271,7 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
         .attr("text-anchor", labelX >= plotRight - LABEL_PADDING ? "end" : "start")
         .text(ticker);
     });
-  }, [data, domain, frameIndex, width]);
+  }, [data, domain, frameIndex, tailLength, width]);
 
   return (
     <div

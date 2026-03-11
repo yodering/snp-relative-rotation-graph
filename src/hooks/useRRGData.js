@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchHistoricalBars } from "../api/alpaca";
-import { computeRRGData } from "../utils/rrg";
+import { aggregateToWeekly, computeRRGData } from "../utils/rrg";
 
-export function useRRGData() {
-  const [data, setData] = useState(null);
+export function useRRGData(resolution) {
+  const [rawData, setRawData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,9 +16,8 @@ export function useRRGData() {
 
       try {
         const prices = await fetchHistoricalBars();
-        const rrgData = computeRRGData(prices);
         if (isMounted) {
-          setData(rrgData);
+          setRawData(prices);
         }
       } catch (loadError) {
         if (isMounted) {
@@ -37,6 +36,15 @@ export function useRRGData() {
       isMounted = false;
     };
   }, []);
+
+  const data = useMemo(() => {
+    if (!rawData) {
+      return null;
+    }
+
+    const normalizedData = resolution === "weekly" ? aggregateToWeekly(rawData) : rawData;
+    return computeRRGData(normalizedData);
+  }, [rawData, resolution]);
 
   return { data, loading, error };
 }
