@@ -1,4 +1,5 @@
 export default function AnimationControls({
+  currentPrice,
   currentDate,
   currentFrame,
   intervalMs,
@@ -38,6 +39,9 @@ export default function AnimationControls({
           Frame {Math.min(currentFrame + 1, totalFrames)} / {totalFrames}
         </div>
         <div style={{ color: "rgba(255,255,255,0.7)" }}>{currentDate ?? "No date loaded"}</div>
+        <div style={{ color: "rgba(255,255,255,0.92)", marginTop: "4px", fontWeight: 600 }}>
+          SPY {Number.isFinite(currentPrice) ? `$${currentPrice.toFixed(2)}` : "--"}
+        </div>
       </div>
 
       <label style={{ display: "grid", gap: "6px", minWidth: "220px" }}>

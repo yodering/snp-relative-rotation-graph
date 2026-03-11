@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import AnimationControls from "./components/AnimationControls";
 import Legend from "./components/Legend";
 import LoadingError from "./components/LoadingError";
+import PriceTimeline from "./components/PriceTimeline";
 import RRGChart from "./components/RRGChart";
 import { ANIMATION_INTERVAL_MS, TAIL_LENGTH } from "./config/constants";
 import { useRRGData } from "./hooks/useRRGData";
@@ -49,25 +50,36 @@ export default function App() {
     return <LoadingError error={error} />;
   }
 
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        color: "#fff",
-        padding: "24px"
-      }}
-    >
-      <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
-        <h1 style={{ marginBottom: "8px" }}>S&amp;P Sector Relative Rotation Graph</h1>
-        <p style={{ marginTop: 0, color: "rgba(255,255,255,0.72)", marginBottom: "24px" }}>
-          JdK RS-Ratio versus JdK RS-Momentum for major sector ETFs relative to SPY.
-        </p>
+  const currentPrice = data.benchmark.prices[frameIndex];
 
+  return (
+    <div className="app-shell">
+      <div className="app-frame">
+        <div className="hero-copy">
+          <p className="eyebrow">Relative strength rotation</p>
+          <h1>S&amp;P sector rotation with a fixed RRG viewport</h1>
+          <p className="hero-description">
+            The graph stays anchored around the 100 / 100 crosshair while the SPY price strip below
+            acts as the scrubber through time.
+          </p>
+        </div>
         <RRGChart data={data} frameIndex={frameIndex} />
+
+        <PriceTimeline
+          currentFrame={frameIndex}
+          currentPrice={currentPrice}
+          dates={data.dates}
+          onFrameChange={(nextFrame) => {
+            setIsPlaying(false);
+            setFrameIndex(nextFrame);
+          }}
+          prices={data.benchmark.prices}
+        />
 
         <AnimationControls
           currentDate={data.dates[frameIndex]}
           currentFrame={frameIndex}
+          currentPrice={currentPrice}
           intervalMs={intervalMs}
           isPlaying={isPlaying}
           onPause={() => setIsPlaying(false)}

@@ -58,6 +58,10 @@ export function computeRRGData(priceData) {
 
   return {
     dates: dates.slice(firstValidIndex),
+    benchmark: {
+      ticker: BENCHMARK,
+      prices: benchmarkPrices.slice(firstValidIndex)
+    },
     sectors: Object.fromEntries(
       SECTORS.map(({ ticker }) => [
         ticker,

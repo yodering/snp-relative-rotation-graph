@@ -1,7 +1,8 @@
 :root {
-  color: #f5f7ff;
-  background: #0f1226;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #edf2ff;
+  background: #0b1020;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  color-scheme: dark;
 }
 
 * {
@@ -17,11 +18,148 @@ body,
 
 body {
   background:
-    radial-gradient(circle at top, rgba(35, 58, 124, 0.35), transparent 35%),
-    linear-gradient(180deg, #12162f 0%, #0b0e20 100%);
+    radial-gradient(circle at top, rgba(74, 114, 219, 0.28), transparent 34%),
+    radial-gradient(circle at 80% 16%, rgba(23, 163, 137, 0.16), transparent 24%),
+    linear-gradient(180deg, #0f152b 0%, #090d1b 100%);
 }
 
 button,
 input {
   font: inherit;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.65), transparent 88%);
+}
+
+.app-shell {
+  min-height: 100vh;
+  color: #edf2ff;
+  padding: 32px 20px 48px;
+}
+
+.app-frame {
+  width: min(1320px, 100%);
+  margin: 0 auto;
+}
+
+.hero-copy {
+  margin-bottom: 24px;
+}
+
+.eyebrow,
+.timeline-eyebrow {
+  margin: 0 0 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.76rem;
+  color: rgba(196, 215, 255, 0.72);
+}
+
+.hero-copy h1,
+.timeline-header h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.timeline-header h2 {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  line-height: 1.1;
+  max-width: 34rem;
+}
+
+.hero-description {
+  margin: 14px 0 0;
+  max-width: 52rem;
+  color: rgba(226, 232, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.timeline-card {
+  margin-top: 18px;
+  padding: 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(196, 215, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03)),
+    rgba(8, 13, 26, 0.72);
+  box-shadow: 0 26px 80px rgba(4, 9, 24, 0.32);
+}
+
+.timeline-header {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.timeline-readout {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+  color: rgba(226, 232, 255, 0.78);
+}
+
+.timeline-readout span:first-child {
+  color: #fff4cc;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.timeline-scroll {
+  cursor: ew-resize;
+  touch-action: pan-x;
+}
+
+.timeline-viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 212, 121, 0.55) rgba(255, 255, 255, 0.06);
+}
+
+.timeline-viewport::-webkit-scrollbar {
+  height: 10px;
+}
+
+.timeline-viewport::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+.timeline-viewport::-webkit-scrollbar-thumb {
+  background: rgba(255, 212, 121, 0.48);
+  border-radius: 999px;
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    padding: 22px 14px 36px;
+  }
+
+  .timeline-card {
+    padding: 16px;
+  }
+
+  .timeline-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timeline-readout {
+    justify-items: start;
+  }
 }
