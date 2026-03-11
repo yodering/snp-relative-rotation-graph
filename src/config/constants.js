@@ -1,7 +1,5 @@
-export const ALPACA_API_KEY = import.meta.env.VITE_ALPACA_API_KEY || "YOUR_API_KEY_HERE";
-export const ALPACA_SECRET_KEY = import.meta.env.VITE_ALPACA_SECRET_KEY || "YOUR_SECRET_KEY_HERE";
-export const ALPACA_FEED = import.meta.env.VITE_ALPACA_FEED || "sip";
 export const ALPACA_BASE_URL = "https://data.alpaca.markets/v2/stocks/bars";
+export const ALPACA_PROXY_ENDPOINT = "/api/alpaca/bars";
 
 export const BENCHMARK = "SPY";
 
