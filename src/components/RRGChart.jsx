@@ -4,7 +4,8 @@ import { SECTORS, TAIL_LENGTH } from "../config/constants";
 
 const HEIGHT = 600;
 const MARGIN = { top: 40, right: 80, bottom: 60, left: 60 };
-const MIN_DOMAIN_SPAN = 4;
+const MIN_DOMAIN_SPAN = 2.4;
+const DOMAIN_LOOKBACK = TAIL_LENGTH * 6;
 
 function useContainerWidth() {
   const containerRef = useRef(null);
@@ -36,7 +37,7 @@ function buildCenteredDomain(values, centerValue) {
     Math.abs((extent[1] ?? centerValue) - centerValue),
     MIN_DOMAIN_SPAN / 2
   );
-  const padding = Math.max(deviation * 0.28, 0.9);
+  const padding = Math.max(deviation * 0.18, 0.45);
   const outerBound = deviation + padding;
 
   return [centerValue - outerBound, centerValue + outerBound];
@@ -47,19 +48,20 @@ export default function RRGChart({ data, frameIndex }) {
   const [containerRef, width] = useContainerWidth();
 
   const domain = useMemo(() => {
+    const windowStart = Math.max(0, frameIndex - DOMAIN_LOOKBACK);
     const ratios = [];
     const momentums = [];
 
     SECTORS.forEach(({ ticker }) => {
-      ratios.push(...data.sectors[ticker].ratio);
-      momentums.push(...data.sectors[ticker].momentum);
+      ratios.push(...data.sectors[ticker].ratio.slice(windowStart, frameIndex + 1));
+      momentums.push(...data.sectors[ticker].momentum.slice(windowStart, frameIndex + 1));
     });
 
     return {
       x: buildCenteredDomain(ratios, 100),
       y: buildCenteredDomain(momentums, 100)
     };
-  }, [data]);
+  }, [data, frameIndex]);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
