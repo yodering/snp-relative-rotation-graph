@@ -1,0 +1,28 @@
+export const ALPACA_API_KEY = import.meta.env.VITE_ALPACA_API_KEY || "YOUR_API_KEY_HERE";
+export const ALPACA_SECRET_KEY = import.meta.env.VITE_ALPACA_SECRET_KEY || "YOUR_SECRET_KEY_HERE";
+export const ALPACA_FEED = import.meta.env.VITE_ALPACA_FEED || "sip";
+export const ALPACA_BASE_URL = "https://data.alpaca.markets/v2/stocks/bars";
+
+export const BENCHMARK = "SPY";
+
+export const SECTORS = [
+  { ticker: "XLB", name: "Materials", color: "#e6194b" },
+  { ticker: "XLC", name: "Communication Services", color: "#3cb44b" },
+  { ticker: "XLE", name: "Energy", color: "#ffe119" },
+  { ticker: "XLF", name: "Financials", color: "#4363d8" },
+  { ticker: "XLI", name: "Industrials", color: "#f58231" },
+  { ticker: "XLK", name: "Technology", color: "#911eb4" },
+  { ticker: "XLP", name: "Consumer Staples", color: "#42d4f4" },
+  { ticker: "XHB", name: "Homebuilders", color: "#f032e6" },
+  { ticker: "XLU", name: "Utilities", color: "#bfef45" },
+  { ticker: "XLV", name: "Health Care", color: "#fabed4" },
+  { ticker: "XLY", name: "Consumer Discretionary", color: "#dcbeff" },
+  { ticker: "XLRE", name: "Real Estate", color: "#9A6324" }
+];
+
+export const RS_PERIOD = 10;
+export const EMA_PERIOD = 10;
+export const TAIL_LENGTH = 8;
+export const LOOKBACK_MONTHS = 8;
+
+export const ANIMATION_INTERVAL_MS = 500;
