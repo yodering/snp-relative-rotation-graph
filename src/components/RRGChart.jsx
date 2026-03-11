@@ -6,6 +6,7 @@ const HEIGHT = 600;
 const MARGIN = { top: 40, right: 80, bottom: 60, left: 60 };
 const MIN_DOMAIN_SPAN = 2.4;
 const DOMAIN_LOOKBACK = TAIL_LENGTH * 2;
+const LABEL_PADDING = 10;
 
 function useContainerWidth() {
   const containerRef = useRef(null);
@@ -79,6 +80,16 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
     const y = d3.scaleLinear().domain(domain.y).range([MARGIN.top + innerHeight, MARGIN.top]);
 
     svg.attr("viewBox", `0 0 ${chartWidth} ${HEIGHT}`).attr("width", "100%").attr("height", HEIGHT);
+
+    const defs = svg.append("defs");
+    defs
+      .append("clipPath")
+      .attr("id", "rrg-plot-clip")
+      .append("rect")
+      .attr("x", MARGIN.left)
+      .attr("y", MARGIN.top)
+      .attr("width", innerWidth)
+      .attr("height", innerHeight);
 
     svg
       .append("rect")
@@ -175,6 +186,8 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
       .call((group) => group.selectAll("line").attr("stroke", "rgba(255,255,255,0.35)"))
       .call((group) => group.select(".domain").attr("stroke", "rgba(255,255,255,0.35)"));
 
+    const clippedPlot = plot.append("g").attr("clip-path", "url(#rrg-plot-clip)");
+
     svg
       .append("text")
       .attr("x", chartWidth / 2)
@@ -213,7 +226,7 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
       const tailStart = Math.max(0, frameIndex - TAIL_LENGTH);
       const tailPoints = d3.range(tailStart, frameIndex + 1).map((index) => [x(ratio[index]), y(momentum[index])]);
 
-      plot
+      clippedPlot
         .append("path")
         .datum(tailPoints)
         .attr("fill", "none")
@@ -225,7 +238,7 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
         .attr("d", d3.line()(tailPoints));
 
       tailPoints.slice(0, -1).forEach((point, index) => {
-        plot
+        clippedPlot
           .append("circle")
           .attr("cx", point[0])
           .attr("cy", point[1])
@@ -237,7 +250,7 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
       const currentX = x(ratio[frameIndex]);
       const currentY = y(momentum[frameIndex]);
 
-      plot
+      clippedPlot
         .append("circle")
         .attr("cx", currentX)
         .attr("cy", currentY)
@@ -246,13 +259,17 @@ export default function RRGChart({ data, frameIndex, zoomLevel }) {
         .attr("stroke", "#ffffff")
         .attr("stroke-width", 1.5);
 
+      const labelX = Math.max(MARGIN.left + LABEL_PADDING, Math.min(currentX + 10, plotRight - LABEL_PADDING));
+      const labelY = Math.max(MARGIN.top + LABEL_PADDING, Math.min(currentY - 10, plotBottom - LABEL_PADDING));
+
       plot
         .append("text")
-        .attr("x", currentX + 10)
-        .attr("y", currentY - 10)
+        .attr("x", labelX)
+        .attr("y", labelY)
         .attr("fill", "#ffffff")
         .attr("font-size", 12)
         .attr("font-weight", 700)
+        .attr("text-anchor", labelX >= plotRight - LABEL_PADDING ? "end" : "start")
         .text(ticker);
     });
   }, [data, domain, frameIndex, width]);

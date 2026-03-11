@@ -56,14 +56,6 @@ export default function App() {
   return (
     <div className="app-shell">
       <div className="app-frame">
-        <div className="hero-copy">
-          <p className="eyebrow">Relative strength rotation</p>
-          <h1>S&amp;P sector rotation with a fixed RRG viewport</h1>
-          <p className="hero-description">
-            The graph stays anchored around the 100 / 100 crosshair while the SPY price strip below
-            acts as the scrubber through time.
-          </p>
-        </div>
         <RRGChart data={data} frameIndex={frameIndex} zoomLevel={zoomLevel} />
 
         <PriceTimeline
@@ -74,7 +66,9 @@ export default function App() {
             setIsPlaying(false);
             setFrameIndex(nextFrame);
           }}
+          onZoomChange={setZoomLevel}
           prices={data.benchmark.prices}
+          zoomLevel={zoomLevel}
         />
 
         <AnimationControls
@@ -93,9 +87,7 @@ export default function App() {
             setFrameIndex(lastFrame);
           }}
           onSpeedChange={setIntervalMs}
-          onZoomChange={setZoomLevel}
           totalFrames={data.dates.length}
-          zoomLevel={zoomLevel}
         />
 
         <Legend />

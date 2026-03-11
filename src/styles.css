@@ -51,10 +51,6 @@ body::before {
   margin: 0 auto;
 }
 
-.hero-copy {
-  margin-bottom: 24px;
-}
-
 .eyebrow,
 .timeline-eyebrow {
   margin: 0 0 10px;
@@ -103,6 +99,22 @@ body::before {
   align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 18px;
+}
+
+.timeline-controls {
+  display: grid;
+  gap: 14px;
+  min-width: min(320px, 100%);
+}
+
+.timeline-zoom {
+  display: grid;
+  gap: 6px;
+  color: rgba(226, 232, 255, 0.82);
+}
+
+.timeline-zoom span {
+  font-size: 0.95rem;
 }
 
 .timeline-readout {
@@ -161,5 +173,9 @@ body::before {
 
   .timeline-readout {
     justify-items: start;
+  }
+
+  .timeline-controls {
+    width: 100%;
   }
 }

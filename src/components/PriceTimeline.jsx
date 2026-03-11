@@ -53,7 +53,15 @@ function formatDate(value) {
   }).format(parsed);
 }
 
-export default function PriceTimeline({ currentFrame, currentPrice, dates, onFrameChange, prices }) {
+export default function PriceTimeline({
+  currentFrame,
+  currentPrice,
+  dates,
+  onFrameChange,
+  onZoomChange,
+  prices,
+  zoomLevel
+}) {
   const scrollRef = useRef(null);
   const [containerRef, containerWidth] = useContainerWidth();
   const [isScrubbing, setIsScrubbing] = useState(false);
@@ -156,9 +164,22 @@ export default function PriceTimeline({ currentFrame, currentPrice, dates, onFra
           <p className="timeline-eyebrow">SPY price timeline</p>
           <h2>Scroll the strip, drag anywhere, or let playback move the cursor.</h2>
         </div>
-        <div className="timeline-readout">
-          <span>{formatPrice(currentPrice)}</span>
-          <span>{formatDate(dates[currentFrame])}</span>
+        <div className="timeline-controls">
+          <label className="timeline-zoom">
+            <span>Zoom {zoomLevel.toFixed(1)}x</span>
+            <input
+              type="range"
+              min="0.8"
+              max="3"
+              step="0.1"
+              value={zoomLevel}
+              onChange={(event) => onZoomChange(Number(event.target.value))}
+            />
+          </label>
+          <div className="timeline-readout">
+            <span>{formatPrice(currentPrice)}</span>
+            <span>{formatDate(dates[currentFrame])}</span>
+          </div>
         </div>
       </div>
 
