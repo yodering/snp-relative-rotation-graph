@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -70,9 +71,60 @@ function decorateErrorMessage(status, message) {
   return message;
 }
 
+function timingSafeEqual(left, right) {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+
+  if (leftBuffer.length !== rightBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function requireBasicAuth(request, response, next) {
+  const expectedUsername = process.env.APP_USERNAME;
+  const expectedPassword = process.env.APP_PASSWORD;
+
+  if (!expectedUsername || !expectedPassword) {
+    next();
+    return;
+  }
+
+  const header = request.headers.authorization;
+  if (!header || !header.startsWith("Basic ")) {
+    response.set("WWW-Authenticate", 'Basic realm="Sector RRG"');
+    response.status(401).send("Authentication required.");
+    return;
+  }
+
+  let decoded;
+  try {
+    decoded = Buffer.from(header.slice(6), "base64").toString("utf8");
+  } catch (_error) {
+    response.set("WWW-Authenticate", 'Basic realm="Sector RRG"');
+    response.status(401).send("Invalid authorization header.");
+    return;
+  }
+
+  const separatorIndex = decoded.indexOf(":");
+  const username = separatorIndex >= 0 ? decoded.slice(0, separatorIndex) : "";
+  const password = separatorIndex >= 0 ? decoded.slice(separatorIndex + 1) : "";
+
+  if (!timingSafeEqual(username, expectedUsername) || !timingSafeEqual(password, expectedPassword)) {
+    response.set("WWW-Authenticate", 'Basic realm="Sector RRG"');
+    response.status(401).send("Invalid username or password.");
+    return;
+  }
+
+  next();
+}
+
 app.get("/api/health", (_request, response) => {
   response.json({ ok: true });
 });
+
+app.use(requireBasicAuth);
 
 app.get("/api/alpaca/bars", async (_request, response) => {
   const apiKey = process.env.ALPACA_API_KEY;
